@@ -1,0 +1,13 @@
+spring:
+
+# JPA (Hibernate)
+jpa:
+  hibernate:
+    ddl-auto: update
+
+# Swagger Setting
+springdoc:
+  swagger-ui:
+    path: /api-doc
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8

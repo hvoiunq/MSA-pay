@@ -4,17 +4,16 @@ import com.fastcampuspay.membership.domain.Membership;
 import lombok.Builder;
 import lombok.Getter;
 
-@Getter
 @Builder
-public class MembershipResponse {
+public record MembershipResponse(
+        Long id,
+        String name,
+        String address,
+        String email,
+        boolean isValid,
+        boolean isCorp
 
-    private Long id;
-    private String name;
-    private String address;
-    private String email;
-    private boolean isValid;
-    private boolean isCorp;
-
+) {
     public static MembershipResponse of(Membership membership) {
         return MembershipResponse.builder()
                 .id(membership.getId().getId())

@@ -15,8 +15,7 @@ public class RegisterMembershipCommand extends SelfValidating<RegisterMembership
 
     @NotNull private final String name;
     @NotNull private final String email;
-    // (참고) 빈값 방지
-    @NotBlank private final String address;
+    @NotBlank private final String address; // (참고) 빈값 방지
     @AssertTrue private final boolean isValid;
     @NotNull private final boolean isCorp;
 

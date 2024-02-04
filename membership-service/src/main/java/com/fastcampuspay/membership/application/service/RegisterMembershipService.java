@@ -28,7 +28,7 @@ public class RegisterMembershipService implements RegisterMembershipUseCase {
 
         MembershipJpaEntity membershipJpaEntity = registerMembershipPort.createMembership(
                 new Membership.MembershipName(command.getName()),
-                new Membership.MembershipEmail(command.getEmail()),
+                new Membership.MembershipEmail(command.getEmail()),q
                 new Membership.MembershipAddress(command.getAddress()),
                 new Membership.MembershipIsValid(command.isValid()),
                 new Membership.MembershipIsCorp(command.isCorp())

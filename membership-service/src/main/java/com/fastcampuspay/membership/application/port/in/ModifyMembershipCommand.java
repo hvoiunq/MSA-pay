@@ -6,9 +6,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Builder
 @Data
+@EqualsAndHashCode(callSuper = false)  //super까지 포함해서 hashing할건지
 public class ModifyMembershipCommand extends SelfValidating<ModifyMembershipCommand> {
 
     @NotNull

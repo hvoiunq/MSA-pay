@@ -1,7 +1,6 @@
 package com.fastcampuspay.membership.application.service;
 
 import com.fastcampuspay.common.annotation.UseCase;
-import com.fastcampuspay.membership.adapter.out.persistence.entity.MembershipJpaEntity;
 import com.fastcampuspay.membership.adapter.out.persistence.MembershipMapper;
 import com.fastcampuspay.membership.application.port.in.RegisterMembershipCommand;
 import com.fastcampuspay.membership.application.port.in.RegisterMembershipUseCase;
@@ -26,17 +25,12 @@ public class RegisterMembershipService implements RegisterMembershipUseCase {
         // production code logic -> DB
         // external system => port, adapter 가 있어야만 통신이 가능하다.
 
-        MembershipJpaEntity membershipJpaEntity = registerMembershipPort.createMembership(
+        return registerMembershipPort.createMembership(
                 new Membership.MembershipName(command.getName()),
-                new Membership.MembershipEmail(command.getEmail()),q
+                new Membership.MembershipEmail(command.getEmail()),
                 new Membership.MembershipAddress(command.getAddress()),
                 new Membership.MembershipIsValid(command.isValid()),
-                new Membership.MembershipIsCorp(command.isCorp())
-        );
-
-        // entity -> 변환
-
-        return membershipMapper.mapToDomainEntity(membershipJpaEntity);
+                new Membership.MembershipIsCorp(command.isCorp()));
 
     }
 }

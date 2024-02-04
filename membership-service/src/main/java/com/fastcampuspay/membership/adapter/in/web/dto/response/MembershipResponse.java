@@ -2,11 +2,13 @@ package com.fastcampuspay.membership.adapter.in.web.dto.response;
 
 import com.fastcampuspay.membership.domain.Membership;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 @Builder
 public class MembershipResponse {
 
-    private Long membershipId;
+    private Long id;
     private String name;
     private String address;
     private String email;
@@ -15,7 +17,7 @@ public class MembershipResponse {
 
     public static MembershipResponse of(Membership membership) {
         return MembershipResponse.builder()
-                .membershipId(membership.getMembershipId().getMembershipId())
+                .id(membership.getId().getId())
                 .name(membership.getName().getName())
                 .email(membership.getEmail().getEmail())
                 .address(membership.getAddress().getAddress())

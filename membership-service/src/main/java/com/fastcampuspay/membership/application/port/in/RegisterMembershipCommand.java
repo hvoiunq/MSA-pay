@@ -13,19 +13,12 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)  //super까지 포함해서 hashing할건지
 public class RegisterMembershipCommand extends SelfValidating<RegisterMembershipCommand> {
 
-    @NotNull
-    private final String name;
-    @NotNull
-    private final String email;
-    @NotNull
-    @NotBlank // (참고) 빈값 방지
-    private final String address;
-
-    @AssertTrue
-    private final boolean isValid;
-
-    @NotNull
-    private final boolean isCorp;
+    @NotNull private final String name;
+    @NotNull private final String email;
+    // (참고) 빈값 방지
+    @NotBlank private final String address;
+    @AssertTrue private final boolean isValid;
+    @NotNull private final boolean isCorp;
 
     public RegisterMembershipCommand(String name, String email, String address, boolean isValid, boolean isCorp) {
         this.name = name;

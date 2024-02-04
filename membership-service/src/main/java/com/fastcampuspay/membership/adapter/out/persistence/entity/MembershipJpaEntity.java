@@ -17,7 +17,7 @@ public class MembershipJpaEntity {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private long id;
     private String name;
     private String address;
     private String email;

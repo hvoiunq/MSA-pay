@@ -8,7 +8,7 @@ import lombok.Value;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Membership {
 
-    @Getter private final MembershipId membershipId;
+    @Getter private final MembershipId id;
     @Getter private final MembershipName name;
     @Getter private final MembershipEmail email;
     @Getter private final MembershipAddress address;
@@ -36,10 +36,10 @@ public class Membership {
 
     @Value
     public static class MembershipId {
-        long membershipId;
+        long id;
 
         public MembershipId(Long value) {
-            this.membershipId = value;
+            this.id = value;
         }
     }
 

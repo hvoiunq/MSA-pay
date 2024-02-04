@@ -1,0 +1,40 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:8.3.0
+    networks:
+      - fastcampus-pay_network
+    volumes:
+      - ${MYSQL_DATA_PATH}:/var/lib/mysql
+      - ${MYSQL_CUSTOM_CONFIG_PATH}:/etc/mysql/conf.d
+      - ${MYSQL_INIT_DB}:/docker-entrypoint-initdb.d
+    env_file: .env
+    ports:
+      - ${MYSQL_BINDING_PORT}:${MYSQL_PORT}
+    environment:
+      - TZ=${TZ}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+  membership-service:
+    restart: on-failure
+    image: demo-membership-service:0.0.1-SNAPSHOT
+    networks:
+      - fastcampus-pay_network
+    env_file: .env
+    ports:
+      - ${MEMBERSHIP_SERVICE_BINDING_PORT}:${MEMBERSHIP_SERVICE_PORT}
+    depends_on:
+      - mysql
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT_STORAGE_ENGINE=innodb
+
+networks:
+  e-wallet_network:
+    driver: bridge

@@ -20,7 +20,7 @@ public class FindMembershipController {
     private final FindMembershipUseCase findMembershipUseCase;
 
     @GetMapping(path = "/membership/{membershipId}")
-    ResponseEntity<MembershipResponse> findMembershipByMemberId(@PathVariable long membershipId) {
+    ResponseEntity<MembershipResponse> findMembershipByMemberId(@PathVariable(value = "membershipId") long membershipId) {
 
         FindMembershipCommand command = new FindMembershipCommand(membershipId);
 

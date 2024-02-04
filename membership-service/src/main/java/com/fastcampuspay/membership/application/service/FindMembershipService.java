@@ -15,7 +15,6 @@ public class FindMembershipService implements FindMembershipUseCase {
 
     private final FindMembershipPort findMembershipPort;
 
-
     @Override
     public Membership findMembership(FindMembershipCommand command) {
         return findMembershipPort.findMembership(new Membership.MembershipId(command.getMembershipId()));

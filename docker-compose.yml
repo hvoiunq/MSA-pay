@@ -3,7 +3,7 @@ services:
   mysql:
     image: mysql:8.3.0
     networks:
-      - fastcampus-pay_network
+      - demo_network
     volumes:
       - ${MYSQL_DATA_PATH}:/var/lib/mysql
       - ${MYSQL_CUSTOM_CONFIG_PATH}:/etc/mysql/conf.d
@@ -22,7 +22,7 @@ services:
     restart: on-failure
     image: demo-membership-service:0.0.1-SNAPSHOT
     networks:
-      - fastcampus-pay_network
+      - demo_network
     env_file: .env
     ports:
       - ${MEMBERSHIP_SERVICE_BINDING_PORT}:${MEMBERSHIP_SERVICE_PORT}
@@ -35,6 +35,23 @@ services:
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT_STORAGE_ENGINE=innodb
 
+  banking-service:
+    restart: on-failure
+    image: demo-banking-service:0.0.1-SNAPSHOT
+    networks:
+      - demo_network
+    env_file: .env
+    ports:
+      - ${BANKING_SERVICE_BINDING_PORT}:${BANKING_SERVICE_PORT}
+    depends_on:
+      - mysql
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT_STORAGE_ENGINE=innodb
+
 networks:
-  e-wallet_network:
+  demo_network:
     driver: bridge

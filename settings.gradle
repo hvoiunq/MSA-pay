@@ -1,2 +1,5 @@
 rootProject.name = 'demo'
-include 'membership-service' , 'common'
+include 'membership-service'
+include 'common'
+include 'banking-service'
+

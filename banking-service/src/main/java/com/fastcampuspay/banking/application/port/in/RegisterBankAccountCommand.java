@@ -16,14 +16,14 @@ public class RegisterBankAccountCommand extends SelfValidating<RegisterBankAccou
     @NotBlank
     private final String bankName; // (참고) 빈값 방지
     @NotNull
-    private final String banckAccountNumber;
+    private final String bankAccountNumber;
     @NotNull
     private final boolean isValid;
 
     public RegisterBankAccountCommand(long membershipId, String bankName, String bankAccountNumber, boolean isValid) {
         this.membershipId = membershipId;
         this.bankName = bankName;
-        this.banckAccountNumber = bankAccountNumber;
+        this.bankAccountNumber = bankAccountNumber;
         this.isValid = isValid;
 
         this.validateSelf();

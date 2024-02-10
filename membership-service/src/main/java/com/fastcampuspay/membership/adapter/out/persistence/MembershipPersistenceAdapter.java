@@ -13,8 +13,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MembershipPersistenceAdapter implements RegisterMembershipPort, FindMembershipPort, ModifyMembershipPort {
 
-    private final SpringDataMembershipRepository membershipRepository;
     private final MembershipMapper membershipMapper;
+    private final SpringDataMembershipRepository membershipRepository;
 
     @Override
     public Membership createMembership(Membership.MembershipName membershipName,

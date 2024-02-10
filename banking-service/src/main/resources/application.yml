@@ -23,7 +23,7 @@ spring:
 
 logging:
   level:
-    com.fastcampuspay.membership: DEBUG
+    com.fastcampuspay.bankaccount: DEBUG
 
 # Swagger Setting
 springdoc:

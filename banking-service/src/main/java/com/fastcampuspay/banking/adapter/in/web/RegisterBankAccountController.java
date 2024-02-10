@@ -21,7 +21,7 @@ public class RegisterBankAccountController {
 
     private final RegisterBankAccountUseCase registerBankAccountUseCase;
 
-    @PostMapping(path = "/bankAccount/register")
+    @PostMapping(path = "/bank/account/register")
     ResponseEntity<BankAccountResponse> registerMembership(@RequestBody RegisterBankAccountRequest request) {
         // request~~
 
@@ -31,6 +31,10 @@ public class RegisterBankAccountController {
 
         RegisterBankAccountCommand command = request.toCommand();
         BankAccount bankAccount = registerBankAccountUseCase.registerBankAccount(command);
+        if (bankAccount == null) {
+            // TODO : Error Handling
+            return null;
+        }
         BankAccountResponse response = BankAccountResponse.of(bankAccount);
 
         return ResponseEntity

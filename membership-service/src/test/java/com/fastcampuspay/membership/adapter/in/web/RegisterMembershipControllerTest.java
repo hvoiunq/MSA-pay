@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class RegisterMembershipControllerTest {
+class RegisterMembershipControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -25,7 +25,7 @@ public class RegisterMembershipControllerTest {
     private static final String MEMBERSHIP_URI ="/membership/register";
 
     private static final RegisterMembershipRequest request = new RegisterMembershipRequest("name", "address", "email", false);
-    private static MembershipResponse excpect = new MembershipResponse(1L, request.getName(), request.getAddress(), request.getEmail(), true, request.isCorp());
+    private static final MembershipResponse expect = new MembershipResponse(1L, request.getName(), request.getAddress(), request.getEmail(), true, request.isCorp());
 
     @Test
     void registerMembership() throws Exception {
@@ -37,6 +37,6 @@ public class RegisterMembershipControllerTest {
                                 .content(mapper.writeValueAsString(request))
                 )
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(excpect)));
+                .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(expect)));
     }
 }

@@ -5,7 +5,7 @@ import com.fastcampuspay.banking.domain.BankAccount;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BankAccountMaper {
+public class BankAccountMapper {
 
     public BankAccount mapToDomainEntity(BankAccountJpaEntity bankAccountJpaEntity) {
         return BankAccount.generateBankAccount(

@@ -1,4 +1,4 @@
-package com.fastcampuspay.banking.application.port.out;
+package com.fastcampuspay.banking.application.port.out.persistence;
 
 import com.fastcampuspay.banking.domain.BankAccount;
 

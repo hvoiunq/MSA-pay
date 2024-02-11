@@ -1,11 +1,11 @@
 package com.fastcampuspay.banking.application.service;
 
-import com.fastcampuspay.banking.adapter.out.external.bank.ExternalBankAccountRequest;
+import com.fastcampuspay.banking.adapter.out.external.request.ExternalBankAccountRequest;
 import com.fastcampuspay.banking.adapter.out.external.bank.ExternalBankAccount;
 import com.fastcampuspay.banking.application.port.in.RegisterBankAccountCommand;
 import com.fastcampuspay.banking.application.port.in.RegisterBankAccountUseCase;
-import com.fastcampuspay.banking.application.port.out.RegisterBankAccountPort;
-import com.fastcampuspay.banking.application.port.out.RequestBankAccountInfoPort;
+import com.fastcampuspay.banking.application.port.out.persistence.RegisterBankAccountPort;
+import com.fastcampuspay.banking.application.port.out.external.RequestBankAccountInfoPort;
 import com.fastcampuspay.banking.domain.BankAccount;
 import com.fastcampuspay.common.annotation.UseCase;
 import jakarta.transaction.Transactional;

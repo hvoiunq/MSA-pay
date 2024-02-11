@@ -3,7 +3,7 @@ spring:
     url: jdbc:mysql://localhost:3306/fastcampus_pay
     username: user
     password: user1234
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    database-driver-class: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update

@@ -11,6 +11,7 @@ import com.fastcampuspay.banking.domain.FirmBankingRequest;
 import com.fastcampuspay.common.annotation.ExternalSystemAdapter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @ExternalSystemAdapter
@@ -55,6 +56,26 @@ public class BankAccountPersistenceAdapter implements RegisterBankAccountPort, R
                         toBankName.getValue(),
                         toBankAccountNumber.getValue(),
                         moneyAmount.getValue(),
+                        firmBankingStatus.getValue(),
+                        uuid
+                )
+        );
+
+        return requestFirmBakingMapper.mapToDomainEntity(saved, uuid);
+    }
+
+    @Override
+    public FirmBankingRequest modifyFirmBankingRequest(FirmBankingRequest.FirmBankingStatus firmBankingStatus, UUID uuid) {
+        // 원래는 동일한 uuid로 상태를 업데이트하는게 맞아보이지만, 여기서는 일단 save로 진행
+        Optional<RequestFirmBankingJpaEntity> byId = firmBankingRequestRepository.findById(uuid.node());
+
+        RequestFirmBankingJpaEntity saved = firmBankingRequestRepository.save(
+                new RequestFirmBankingJpaEntity(
+                        byId.orElseThrow().getFromBankName(),
+                        byId.orElseThrow().getFromBankAccountNumber(),
+                        byId.orElseThrow().getToBankName(),
+                        byId.orElseThrow().getToBankAccountNumber(),
+                        byId.orElseThrow().getMoneyAccount(),
                         firmBankingStatus.getValue(),
                         uuid
                 )

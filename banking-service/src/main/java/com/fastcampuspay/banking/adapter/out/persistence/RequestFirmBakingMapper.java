@@ -1,8 +1,6 @@
 package com.fastcampuspay.banking.adapter.out.persistence;
 
-import com.fastcampuspay.banking.adapter.out.persistence.entity.BankAccountJpaEntity;
 import com.fastcampuspay.banking.adapter.out.persistence.entity.RequestFirmBankingJpaEntity;
-import com.fastcampuspay.banking.domain.BankAccount;
 import com.fastcampuspay.banking.domain.FirmBankingRequest;
 import org.springframework.stereotype.Component;
 

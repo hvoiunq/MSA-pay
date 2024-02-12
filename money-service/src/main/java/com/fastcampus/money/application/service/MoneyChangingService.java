@@ -42,7 +42,7 @@ public class MoneyChangingService implements IncreaseMoneyReqUseCase {
 
         // 6-2. 결과가 실패라면, 실패로 request 상태값 변경 후 리턴
 
-        return registerMoneyChangingPort.generateMoneyChangingRequest(
+        return registerMoneyChangingPort.saveMoneyChangingRequest(
                 new MoneyChangingRequest.TargetMembershipId(command.getTargetMembershipId()),
                 new MoneyChangingRequest.ChangingMoneyType(INCREASING),
                 new MoneyChangingRequest.ChangingMoneyAmount(command.getAmount()),

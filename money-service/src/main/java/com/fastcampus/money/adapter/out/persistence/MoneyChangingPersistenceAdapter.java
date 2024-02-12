@@ -23,11 +23,11 @@ public class MoneyChangingPersistenceAdapter implements MoneyChangingPort {
     private final MemberMoneyRepository memberMoneyRepository;
 
     @Override
-    public MoneyChangingRequest generateMoneyChangingRequest(MoneyChangingRequest.TargetMembershipId targetMembershipId,
-                                                             MoneyChangingRequest.ChangingMoneyType changingType,
-                                                             MoneyChangingRequest.ChangingMoneyAmount changingMoneyAmount,
-                                                             MoneyChangingRequest.ChangingMoneyStatus changingMoneyStatus,
-                                                             UUID uuid) {
+    public MoneyChangingRequest saveMoneyChangingRequest(MoneyChangingRequest.TargetMembershipId targetMembershipId,
+                                                         MoneyChangingRequest.ChangingMoneyType changingType,
+                                                         MoneyChangingRequest.ChangingMoneyAmount changingMoneyAmount,
+                                                         MoneyChangingRequest.ChangingMoneyStatus changingMoneyStatus,
+                                                         UUID uuid) {
         // entity 저장
         MoneyChangingJpaEntity saved = moneyChangingRepository.save(
                 new MoneyChangingJpaEntity(

@@ -1,14 +1,64 @@
 version: '3'
 services:
-  mysql:
-    image: mysql:8.3.0
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    env_file:
+      - .env
+    ports:
+      - ${ZOOKEEPER_PORT}:${ZOOKEEPER_PORT}
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
     networks:
       - demo_network
+    env_file:
+      - .env
+    ports:
+      - ${KAFKA_LOCAL_PORT1}:${KAFKA_LOCAL_PORT1}
+      - ${KAFKA_LOCAL_PORT2}:${KAFKA_LOCAL_PORT2}
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ADVERTISED_PORT: ${KAFKA_LOCAL_PORT1}
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:${ZOOKEEPER_PORT}
+      KAFKA_LISTENERS: 'PLAINTEXT://:9092'
+      # 외부에서 접속하기 위한 리스너 설정
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
     volumes:
-      - ${MYSQL_DATA_PATH}:/var/lib/mysql
-      - ${MYSQL_CUSTOM_CONFIG_PATH}:/etc/mysql/conf.d
-      - ${MYSQL_INIT_DB}:/docker-entrypoint-initdb.d
-    env_file: .env
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  kafka-ui:
+    # 사용할 이미지
+    image: provectuslabs/kafka-ui
+    # 컨테이너명 설정
+    container_name: kafka-ui
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${KAFKA_UI_BINDING_PORT}:${KAFKA_UI_PORT}
+    depends_on:
+      - zookeeper
+      - kafka
+    # 환경 변수 설정
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:${KAFKA_LOCAL_PORT2}
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:${ZOOKEEPER_PORT}
+
+  db:
+    image: mariadb
+    container_name: msa-pay-mariadb
+    networks:
+      - demo_network
+    env_file:
+      - .env
     ports:
       - ${MYSQL_BINDING_PORT}:${MYSQL_PORT}
     environment:
@@ -17,6 +67,10 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ${MYSQL_DATA_PATH}:/var/lib/mysql
+      - ${MYSQL_CUSTOM_CONFIG_PATH}:/etc/mysql/conf.d
+      - ${MYSQL_INIT_DB}:/docker-entrypoint-initdb.d
 
   membership-service:
     restart: on-failure
@@ -27,13 +81,15 @@ services:
     ports:
       - ${MEMBERSHIP_SERVICE_BINDING_PORT}:${MEMBERSHIP_SERVICE_PORT}
     depends_on:
-      - mysql
+      - db
     environment:
       - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
       - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
       - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT_STORAGE_ENGINE=innodb
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:${KAFKA_LOCAL_PORT2}
+      - LOGGING_TOPIC=${LOGGING_TOPIC}
 
   banking-service:
     restart: on-failure
@@ -44,13 +100,34 @@ services:
     ports:
       - ${BANKING_SERVICE_BINDING_PORT}:${BANKING_SERVICE_PORT}
     depends_on:
-      - mysql
+      - db
     environment:
       - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
       - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
       - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT_STORAGE_ENGINE=innodb
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:${KAFKA_LOCAL_PORT2}
+      - LOGGING_TOPIC=${LOGGING_TOPIC}
+
+  money-service:
+    restart: on-failure
+    image: demo-money-service:0.0.1-SNAPSHOT
+    networks:
+      - demo_network
+    env_file: .env
+    ports:
+      - ${MONEY_SERVICE_BINDING_PORT}:${MONEY_SERVICE_PORT}
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT_STORAGE_ENGINE=innodb
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:${KAFKA_LOCAL_PORT2}
+      - LOGGING_TOPIC=${LOGGING_TOPIC}
 
 networks:
   demo_network:

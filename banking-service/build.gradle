@@ -1,3 +1,4 @@
+//file:noinspection DependencyNotationArgument
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.2'
@@ -47,12 +48,12 @@ dependencies {
     testImplementation 'com.tngtech.archunit:archunit:1.2.1'
 }
 
-docker {
-    name rootProject.name + '-' + project.name + ':' + version
-    dockerfile file('./Dockerfile')
-    files tasks.bootJar.outputs.files
-    buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
-}
+//docker {
+//    name rootProject.name + '-' + project.name + ':' + version
+//    dockerfile file('./Dockerfile')
+//    files tasks.bootJar.outputs.files
+//    buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
+//}
 
 tasks.named('test') {
     useJUnitPlatform()

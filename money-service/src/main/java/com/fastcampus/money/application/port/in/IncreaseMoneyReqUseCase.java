@@ -4,4 +4,6 @@ import com.fastcampus.money.domain.MoneyChangingRequest;
 
 public interface IncreaseMoneyReqUseCase {
     MoneyChangingRequest increaseMoney(RequestIncreaseMoneyCommand command);
+    MoneyChangingRequest increaseMoneyAsync(RequestIncreaseMoneyCommand command);
+
 }

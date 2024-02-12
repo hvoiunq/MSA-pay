@@ -31,3 +31,7 @@ springdoc:
     path: /api-doc
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
+
+service:
+  membership: 
+    url: http://localhost:8081

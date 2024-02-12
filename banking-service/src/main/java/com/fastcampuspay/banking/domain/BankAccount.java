@@ -5,21 +5,24 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
 
-
+@Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BankAccount {
 
-    @Getter
     private final long bankAccountId;
-    @Getter
     private final long membershipId;
-    @Getter
     private final String bankName; //enum
-    @Getter
     private final String bankAccountNumber;
-    @Getter
     private final boolean linkedStatusIsValid;
 
+    /**
+     * @param bankAccountId
+     * @param membershipId
+     * @param bankName
+     * @param bankAccountNumber
+     * @param linkedStatusIsValid
+     * @return
+     */
     public static BankAccount generateBankAccount(
             BankAccount.BankAccountId bankAccountId,
             BankAccount.MembershipId membershipId,

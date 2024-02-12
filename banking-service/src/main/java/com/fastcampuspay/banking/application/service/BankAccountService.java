@@ -4,6 +4,8 @@ import com.fastcampuspay.banking.adapter.out.external.request.ExternalBankAccoun
 import com.fastcampuspay.banking.adapter.out.external.bank.ExternalBankAccount;
 import com.fastcampuspay.banking.application.port.in.RegisterBankAccountCommand;
 import com.fastcampuspay.banking.application.port.in.RegisterBankAccountUseCase;
+import com.fastcampuspay.banking.application.port.out.external.GetMembershipPort;
+import com.fastcampuspay.banking.application.port.out.external.MembershipStatus;
 import com.fastcampuspay.banking.application.port.out.persistence.RegisterBankAccountPort;
 import com.fastcampuspay.banking.application.port.out.external.RequestBankAccountInfoPort;
 import com.fastcampuspay.banking.domain.BankAccount;
@@ -16,14 +18,26 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class BankAccountService implements RegisterBankAccountUseCase {
 
+    private final GetMembershipPort getMembershipPort;
     private final RegisterBankAccountPort registerBankAccountPort;
     private final RequestBankAccountInfoPort requestBankAccountInfoPort;
 
+    /***
+     * 은행 계좌 등록 서비스
+     * @param command {@link RegisterBankAccountCommand}
+     * @return {@link BankAccount}
+     * @see <a href = "https://github.com/hvoiunq/MSA-pay"> github </a>
+     */
     @Override
     public BankAccount registerBankAccount(RegisterBankAccountCommand command) {
 
-        // 은행 계좌 등록 서비스
-        // 멤버 확인 (여기서는 skip)
+
+        // 멤버 확인
+        MembershipStatus membership = getMembershipPort.getMembership(String.valueOf(command.getMembershipId()));
+        if (membership == null) {
+            throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+        }
+
         // 1. 외부 실제 은행에 등록 가능한 은행인지 확인
         // biz logic -> exception
         // Port -> adapter -> External System

@@ -48,9 +48,24 @@ services:
       - kafka
     # 환경 변수 설정
     environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:${KAFKA_LOCAL_PORT2}
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:${ZOOKEEPER_PORT}
+      - KAFKA_CLUSTERS_NAME=local
+      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:${KAFKA_LOCAL_PORT2}
+      - KAFKA_CLUSTERS_ZOOKEEPER=zookeeper:${ZOOKEEPER_PORT}
+
+  task-consumer:
+    restart: on-failure
+    image: demo-task-consumer:0.0.1-SNAPSHOT
+    networks:
+      - demo_network
+    env_file: .env
+    depends_on:
+      - zookeeper
+      - kafka
+    environment:
+      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:${KAFKA_LOCAL_PORT2}
+      - LOGGING_TOPIC=${LOGGING_TOPIC}
+      - TASK_TOPIC=${TASK_TOPIC}
+      - TASK_RESULT_TOPIC=${TASK_RESULT_TOPIC}
 
   db:
     image: mariadb
@@ -127,7 +142,7 @@ services:
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT_STORAGE_ENGINE=innodb
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:${KAFKA_LOCAL_PORT2}
-      - LOGGING_TOPIC=${LOGGING_TOPIC}
+      - TASK_TOPIC=${TASK_TOPIC}
 
 networks:
   demo_network:

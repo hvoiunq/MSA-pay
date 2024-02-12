@@ -1,7 +1,6 @@
 package com.fastcampuspay.banking.application.service;
 
 import com.fastcampuspay.banking.adapter.out.external.bank.FirmBankingResult;
-import com.fastcampuspay.banking.adapter.out.external.request.ExternalFirmBankingRequest;
 import com.fastcampuspay.banking.application.port.in.RequestFirmBankingCommand;
 import com.fastcampuspay.banking.application.port.in.RequestFirmBankingUseCase;
 import com.fastcampuspay.banking.application.port.out.external.RequestExternalFirmBankingPort;
@@ -39,12 +38,12 @@ public class RequestFirmBankingService implements RequestFirmBankingUseCase {
         );
 
         // 2. 외부 은행에 펌뱅킹 이체 요청
-        FirmBankingResult firmBankingResult = requestExternalFirmBankingPort.requestExternalFirmBanking(new ExternalFirmBankingRequest(
-                command.getFromBankName(),
-                command.getFromBankAccountNumber(),
-                command.getToBankName(),
-                command.getToBankAccountNumber()
-        ));
+        FirmBankingResult firmBankingResult = requestExternalFirmBankingPort.requestExternalFirmBanking(
+                new FirmBankingRequest.FromBankName(command.getFromBankName()),
+                new FirmBankingRequest.FromBankAccountNumber(command.getFromBankAccountNumber()),
+                new FirmBankingRequest.ToBankName(command.getToBankName()),
+                new FirmBankingRequest.ToBankAccountNumber(command.getToBankAccountNumber())
+        );
 
         // 3. 이체 결과 수신, 결과에 따라 1번에서 작성한 FirmBankingRequest 정보 update
         FirmBankingRequest.FirmBankingStatus firmBankingStatus = null;

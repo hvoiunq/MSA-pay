@@ -7,11 +7,16 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
-public class ExternalFirmBankingRequest {
-
-    private String fromBankName;
-    private String fromBankAccountNumber;
-    private String toBankName;
-    private String toBankAccountNumber;
+@NoArgsConstructor(force = true)
+public record ExternalFirmBankingRequest(
+        String fromBankName,
+        String fromBankAccountNumber,
+        String toBankName,
+        String toBankAccountNumber
+) {
+    public static ExternalFirmBankingRequest of(String fromBankName, String fromBankAccountNumber, String toBankName, String toBankAccountNumber) {
+        return new ExternalFirmBankingRequest(fromBankName, fromBankAccountNumber, toBankName, toBankAccountNumber);
+    }
 }
+
+

@@ -1,4 +1,4 @@
-package com.fastcampus.money.adapter.out.external.service;
+package com.fastcampus.money.adapter.out.service;
 
 import com.fastcampus.money.application.port.out.external.GetMembershipPort;
 import com.fastcampus.money.application.port.out.external.MembershipStatus;

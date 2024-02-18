@@ -1,4 +1,4 @@
-package com.fastcampus.money.adapter.out.external.service;
+package com.fastcampus.money.adapter.out.service;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

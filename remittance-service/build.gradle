@@ -5,13 +5,12 @@ plugins {
     id 'com.palantir.docker' version '0.35.0'
 }
 
-group = 'com.fastcampus.loggingconsumer'
+group = 'com.fastcampus.remittanceservice'
 version = '0.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
-
 
 dependencies {
     // Spring Boot

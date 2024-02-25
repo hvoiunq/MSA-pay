@@ -27,9 +27,17 @@ public class MemberMoneyJpaEntity {
 
     private long balance;
 
+    private String aggregateIdentifier;
+
     public MemberMoneyJpaEntity(long membershipId, long balance) {
         this.membershipId = membershipId;
         this.balance = balance;
+    }
+
+    public MemberMoneyJpaEntity(long membershipId, long balance, String aggregateIdentifier) {
+        this.membershipId = membershipId;
+        this.balance = balance;
+        this.aggregateIdentifier = aggregateIdentifier;
     }
 
     @Override

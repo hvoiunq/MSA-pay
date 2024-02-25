@@ -1,9 +1,16 @@
 package com.fastcampus.money.application.service;
 
-import com.fastcampus.money.application.port.in.IncreaseMoneyReqUseCase;
-import com.fastcampus.money.application.port.in.RequestIncreaseMoneyCommand;
+import com.fastcampus.money.adapter.axon.command.CreatedMemberMoneyCommand;
+import com.fastcampus.money.adapter.axon.event.IncreaseMemberMoneyEvent;
+import com.fastcampus.money.adapter.out.persistence.MoneyChangingRequestMapper;
+import com.fastcampus.money.adapter.out.persistence.entity.MemberMoneyJpaEntity;
+import com.fastcampus.money.application.port.in.*;
+import com.fastcampus.money.application.port.out.external.GetMemberMoneyPort;
 import com.fastcampus.money.application.port.out.external.GetMembershipPort;
+import com.fastcampus.money.application.port.out.external.MembershipStatus;
 import com.fastcampus.money.application.port.out.kafka.SendRechargingMoneyTaskPort;
+import com.fastcampus.money.application.port.out.persistence.CreateMemberMoneyPort;
+import com.fastcampus.money.application.port.out.persistence.IncreaseMoneyPort;
 import com.fastcampus.money.application.port.out.persistence.MoneyChangingPort;
 import com.fastcampus.money.domain.MemberMoney;
 import com.fastcampus.money.domain.MoneyChangingRequest;
@@ -14,6 +21,7 @@ import com.fastcampuspay.common.task.SubTask;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.axonframework.commandhandling.gateway.CommandGateway;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -26,19 +34,27 @@ import static com.fastcampus.money.domain.MoneyChangingRequest.ChangingType.INCR
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Transactional
-public class MoneyChangingService implements IncreaseMoneyReqUseCase {
+public class MoneyChangingService implements IncreaseMoneyReqUseCase, CreateMemberMoneyUseCase {
 
     private static MoneyChangingPort registerMoneyChangingPort;
     private static GetMembershipPort getMembershipPort;
     private static SendRechargingMoneyTaskPort sendRechargingMoneyTaskPort;
+    private static CreateMemberMoneyPort createMemberMoneyPort;
+    private static GetMemberMoneyPort getMemberMoneyPort;
+    private static IncreaseMoneyPort increaseMoneyPort;
+    private static IncreaseMemberMoneyEvent increaseMemberMoneyEvent;
     private static CountDownLatchManager countDownLatchManager;
+
+    private final CommandGateway commandGateway;
+    private final MoneyChangingRequestMapper mapper;
+
 
     @Override
     public MoneyChangingRequest increaseMoney(RequestIncreaseMoneyCommand command) {
 
         // 머니 충전(증액)
         // 1. 고객 정보 정상 확인 (멤버)
-        getMembershipPort.getMembership(String.valueOf(command.getTargetMembershipId()));
+        getMembershipPort.getMembership(command.getTargetMembershipId());
 
         // 2. 고객의 연동된 계좌가 있는지, 고객의 연동된 계좌의 잔액이 충분한지 확인 (뱅킹)
         // 3. 법인 계좌 상태도 정상인지 확인 (뱅킹)
@@ -136,6 +152,58 @@ public class MoneyChangingService implements IncreaseMoneyReqUseCase {
 
         // 5. consume ok => 추가 business 로직이 필요한 경우
 
+    }
+
+    @Override
+    public void increaseMoneyRequestByEvent(IncreaseMoneyReqCommand command) {
+        MembershipStatus membership = getMembershipPort.getMembership(command.getMembershipId());
+
+        commandGateway.send(command)
+                .whenComplete(
+                        (result, throwable) -> {
+                            if (throwable != null) {
+                                System.out.println("throwable = " + throwable);
+                                throw new RuntimeException(throwable);
+                            } else {
+                                System.out.println("result = " + result);
+
+                                //increase money
+                                MemberMoneyJpaEntity memberMoneyJpaEntity = increaseMoneyPort.increaseMoney(
+                                        new MemberMoney.MembershipId(membership.getMembershipId()),
+                                        command.getAmount());
+
+                                if (memberMoneyJpaEntity != null) {
+//                                    mapper.mapToMemberMoneyEntity(
+//                                            increaseMoneyPort.createMoneyChangingRequest(
+//                                                    new MoneyChangingRequest.TargetMembershipId(command.getMembershipId()),
+//                                                    new MoneyChangingRequest.ChangingMoneyType(INCREASING),
+//                                                    new MoneyChangingRequest.ChangingMoneyAmount(command.getAmount()),
+//                                                    new MoneyChangingRequest.ChangingMoneyStatus(SUCCEEDED),
+//                                                    new MoneyChangingRequest.Uuid()));
+                                }
+                            }
+                        }
+                );
+
+    }
+
+    @Override
+    public void CreateMemberMoney(CreateMemberMoneyCommand command) {
+        CreatedMemberMoneyCommand axonCommand = new CreatedMemberMoneyCommand(command.getTargetMembershipId());
+        commandGateway.send(axonCommand)
+                .whenComplete(
+                        (result, throwable) -> {
+                            if (throwable != null) {
+                                System.out.println("MoneyChangingService.CreateMemberMoney");
+                                throw new RuntimeException(throwable);
+                            } else {
+                                System.out.println("result = " + result);
+                                createMemberMoneyPort.createMemberMoney(
+                                        new MemberMoney.MembershipId(command.getTargetMembershipId()),
+                                        new MemberMoney.MoneyAggregateIdentifier(result.toString())
+                                );
+                            }
+                        }); // send를 하는 순간 axonserver에 event queue 에 보내게 된다.
 
     }
 }

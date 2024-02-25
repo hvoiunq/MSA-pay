@@ -21,9 +21,9 @@ public class MembershipServiceAdapter implements GetMembershipPort {
     }
 
     @Override
-    public MembershipStatus getMembership(String membershipId) {
+    public MembershipStatus getMembership(long membershipId) {
 
-        String url = String.join("/", membershipServiceUrl, "membership", membershipId);
+        String url = String.join("/", membershipServiceUrl, "membership", String.valueOf(membershipId));
 
         try {
             HttpResponse<String> stringHttpResponse = commonHttpClient.sendGetRequest(url);

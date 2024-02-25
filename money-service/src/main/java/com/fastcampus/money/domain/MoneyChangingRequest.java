@@ -60,7 +60,7 @@ public class MoneyChangingRequest {
     }
 
     @Getter
-    private final UUID uuid;
+    private final Uuid uuid;
 
     public static MoneyChangingRequest generateMoneyChangingRequest(MoneyChangingRequestId moneyChangingRequestId,
                                                              TargetMembershipId targetMembershipId,
@@ -73,7 +73,7 @@ public class MoneyChangingRequest {
                 changingType.value,
                 changingMoneyAmount.value,
                 changingMoneyStatus.value,
-                UUID.randomUUID()
+                Uuid.uuid
         );
     }
 
@@ -123,4 +123,12 @@ public class MoneyChangingRequest {
         }
     }
 
+    @Value
+    public static class Uuid {
+        UUID uuid;
+
+        public Uuid() {
+            this.uuid = UUID.randomUUID();
+        }
+    }
 }

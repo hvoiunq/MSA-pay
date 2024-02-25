@@ -30,7 +30,7 @@ public class ExternalBankAccountAdapter implements RequestBankAccountInfoPort, R
                                                         FirmBankingRequest.ToBankAccountNumber toBankAccountNumber) {
 
         // 실제 외부 은행 http 통신 후 펌뱅킹 요청
-        externalFirmBankingMapper.mapToDomainRequest(fromBankName, fromBankAccountNumber, toBankName, toBankAccountNumber);
+        ExternalFirmBankingRequest externalFirmBankingRequest = externalFirmBankingMapper.mapToDomainRequest(fromBankName, fromBankAccountNumber, toBankName, toBankAccountNumber);
 
         // 결과 외부 은행의 실제 결과를 firmbanking result로 파싱
         return new FirmBankingResult(0);
